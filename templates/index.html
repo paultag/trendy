@@ -26,7 +26,7 @@ $(document).ready(function() {
         });
     }
 
-    $.get('/static/data.json', function(data) {
+    $.getJSON('/trains.json', function(data) {
         $.each(data, function() {
             var name = this.platform.name;
             var x    = this.platform.x;
