@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <script type = 'text/javascript' src = 'http://code.jquery.com/jquery-1.7.1.min.js' ></script>
+        <script type = 'text/javascript' >
+$(document).ready(function() {
+    function add_el_at( elName, id, ex, why ) {
+        $("#holder").append("<img id = '" +  id +
+            "' src = '" + elName + "' />");
+        set_el_pos( id, "map", ex, why );
+    }
+    function set_el_pos( elName, os, ex, why ) {
+        h  = $("#" + elName)
+        os = $("#" + os).offset();
+        imgX = h.width();
+        imgY = h.height();
+
+        why -= ( imgY );
+        // ex  += ( imgX / 2 );
+
+        h.css({
+            position: "absolute",
+            top:  os.top  + why,
+            left: os.left + ex
+        });
+    }
+
+    $.get('/static/data.json', function(data) {
+        $.each(data, function() {
+            var name = this.platform.name;
+            var x    = this.platform.x;
+            var y    = this.platform.y;
+            var id   = this.trip;
+            add_el_at("/static/red_line.gif", ( "t-" + id ), x, y );
+        });
+    });
+
+    // add_el_at("/static/red_line.gif", "t-10", 347, 420 );
+    // set_el_pos( "t-10", "map", 20, 20 );
+});
+        </script>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <title></title>
+        <link
+            href="{{ url_for('static', filename='default.css') }}"
+            type="text/css" rel="stylesheet" ></link>
+    </head>
+    <body>
+        <center id = 'holder' >
+<img id = 'map' src = '{{ url_for('static', filename='mbta.jpg') }}' alt = 'mbta' />
+        </center>
+    </body>
+</html>
