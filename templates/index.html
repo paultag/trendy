@@ -13,11 +13,11 @@ $(document).ready(function() {
     function set_el_pos( elName, os, ex, why ) {
         h  = $("#" + elName)
         os = $("#" + os).offset();
-        imgX = h.width();
-        imgY = h.height();
+        imgW = h.width();
+        imgH = h.height();
 
-        why -= ( imgY );
-        // ex  += ( imgX / 2 );
+        // ex  = ( ex  - ( imgW / 8 ) );
+        why = ( why - ( imgH ));
 
         h.css({
             position: "absolute",
