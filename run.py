@@ -36,7 +36,8 @@ def get_json():
 
     for train in charlie.train_list:
         train = charlie.train_list[train]
-        platform = train.getLastKnownPlatform()
+        event = train.getMostCloseEvent()
+        platform = event["PlatformKey"]
         station  = charlie.station_list[ \
             charlie.stop_list[platform].getStationName()]
         try:
