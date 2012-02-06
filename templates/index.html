@@ -16,6 +16,7 @@ $(document).ready(function() {
         imgW = h.width();
         imgH = h.height();
         why = ( why - ( imgH ));
+        ex  = ( ex  - ( imgW / 2 ));
         h.css({
             position: "absolute",
             top:      os.top  + why,
@@ -24,26 +25,26 @@ $(document).ready(function() {
         return h;
     }
 
-    $.getJSON('/trains.json', function(data) {
-        $.each(data, function() {
-            root = this.root;
-            dest = this.dest;
-            foo  = "t-" + this.id;
-
-            var h = add_el_at("/static/red_line.gif", foo,
-                root.x, root.y );
-
-            var os = $("#map").offset();
-            var why  = ( this.dest.y - ( h.height() )  );
-            var ecks = ( this.dest.x - ( h.width() / 2 ));
-
-            h.animate({
-                top:   os.top + ( why ),
-                left:  os.left + ecks
-            }, ( this.time ) * 100 );
-
+    function update_nodes() {
+        $.getJSON('/trains.json', function(data) {
+            $.each(data, function() {
+                root = this.root;
+                dest = this.dest;
+                foo  = "t-" + this.id;
+                if ( $("#" + foo).length == 0 ) {
+                    var h = add_el_at("/static/red_line.gif", foo,
+                        root.x, root.y );
+                } else {
+                    set_el_pos(foo, "map", root.x, root.y );
+                }
+            });
         });
-    });
+    }
+
+    window.setInterval(function() {
+        update_nodes();
+    }, 10000);
+    update_nodes();
 
     // add_el_at("/static/red_line.gif", "t-10", 347, 420 );
     // set_el_pos( "t-10", "map", 20, 20 );

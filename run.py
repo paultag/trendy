@@ -33,6 +33,7 @@ def load_location_data():
 
 @app.route("/trains.json")
 def get_json():
+    charlie.refresh()
     ret = []
     locd = load_location_data()
 
