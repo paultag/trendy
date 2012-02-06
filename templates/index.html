@@ -34,12 +34,13 @@ $(document).ready(function() {
                 root.x, root.y );
 
             var os = $("#map").offset();
-            var why = ( this.dest.y - ( h.height() ) );
+            var why  = ( this.dest.y - ( h.height() )  );
+            var ecks = ( this.dest.x - ( h.width() / 2 ));
 
             h.animate({
                 top:   os.top + ( why ),
-                left:  os.left + this.dest.x
-            }, ( this.time * 100 ) );
+                left:  os.left + ecks
+            }, ( this.time ) * 100 );
 
         });
     });
