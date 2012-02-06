@@ -8,31 +8,39 @@ $(document).ready(function() {
     function add_el_at( elName, id, ex, why ) {
         $("#holder").append("<img id = '" +  id +
             "' src = '" + elName + "' />");
-        set_el_pos( id, "map", ex, why );
+        return set_el_pos( id, "map", ex, why );
     }
     function set_el_pos( elName, os, ex, why ) {
         h  = $("#" + elName)
         os = $("#" + os).offset();
         imgW = h.width();
         imgH = h.height();
-
-        // ex  = ( ex  - ( imgW / 8 ) );
         why = ( why - ( imgH ));
-
         h.css({
             position: "absolute",
-            top:  os.top  + why,
-            left: os.left + ex
+            top:      os.top  + why,
+            left:     os.left + ex
         });
+        return h;
     }
 
     $.getJSON('/trains.json', function(data) {
         $.each(data, function() {
-            var name = this.platform.name;
-            var x    = this.platform.x;
-            var y    = this.platform.y;
-            var id   = this.trip;
-            add_el_at("/static/red_line.gif", ( "t-" + id ), x, y );
+            root = this.root;
+            dest = this.dest;
+            foo  = "t-" + this.id;
+
+            var h = add_el_at("/static/red_line.gif", foo,
+                root.x, root.y );
+
+            var os = $("#map").offset();
+            var why = ( this.dest.y - ( h.height() ) );
+
+            h.animate({
+                top:   os.top + ( why ),
+                left:  os.left + this.dest.x
+            }, ( this.time * 100 ) );
+
         });
     });
 

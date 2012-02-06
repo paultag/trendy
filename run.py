@@ -7,7 +7,6 @@ import os
 import charlie
 import json
 
-
 # End setup
 
 @app.route("/")
@@ -16,10 +15,7 @@ def list_folder():
         'index.html'
     )
 
-
-@app.route("/trains.json")
-def get_json():
-    ret = []
+def load_location_data():
     hs = [ "x", "y", "name" ]
     inf = open("tlocs", 'r').readlines()
     inf = [ s.strip().split(",") for s in inf ]
@@ -33,21 +29,47 @@ def get_json():
                 pass
             l[hs[x]] = line[x]
         stop_trans[l['name']] = l
+    return stop_trans
+
+@app.route("/trains.json")
+def get_json():
+    ret = []
+    locd = load_location_data()
 
     for train in charlie.train_list:
         train = charlie.train_list[train]
-        event = train.getMostCloseEvent()
-        platform = event["PlatformKey"]
-        station  = charlie.station_list[ \
-            charlie.stop_list[platform].getStationName()]
-        try:
-            ret.append({
-                "trip"     : train.getTrip(),
-                "station"  : station.name,
-                "platform" : stop_trans[station.name],
-            })
-        except KeyError as e:
-            pass
+        curStop = train.getNextEvent()
+        if not curStop:
+            continue
+
+        preStop = train.getStop( curStop["prev"] )
+        if not preStop:
+            continue
+
+        time = curStop["TargetTime"] - preStop["TargetTime"]
+
+        curStation = charlie.get_station_by_stop( curStop["PlatformKey"] )
+        preStation = charlie.get_station_by_stop( preStop["PlatformKey"] )
+
+        curLoc = locd[curStation.name]
+        preLoc = locd[preStation.name]
+
+        payload = {
+            "id" : train.name,
+            "root" : {
+                "id" : curLoc["name"],
+                "x"  : curLoc["x"],
+                "y"  : curLoc["y"]
+            },
+            "dest" : {
+                "id" : preLoc["name"],
+                "x"  : preLoc["x"],
+                "y"  : preLoc["y"]
+            },
+            "time" : time.seconds
+        }
+        ret.append(payload)
+
     return render_template(
         "json",
         json=json.dumps(ret)
