@@ -42,8 +42,11 @@ def get_json():
         curStop = train.getNextEvent()
         if not curStop:
             continue
+        try:
+            preStop = train.getStop( curStop["prev"] )
+        except KeyError:
+            continue
 
-        preStop = train.getStop( curStop["prev"] )
         if not preStop:
             continue
 

@@ -18,10 +18,12 @@ $(document).ready(function() {
         why = ( why - ( imgH ));
         ex  = ( ex  - ( imgW / 2 ));
         h.css({
-            position: "absolute",
-            top:      os.top  + why,
-            left:     os.left + ex
+            position: "absolute"
         });
+        h.animate({
+            top:      ( os.top  + why ),
+            left:     ( os.left + ex )
+        }, 5000);
         return h;
     }
 
@@ -43,7 +45,7 @@ $(document).ready(function() {
 
     window.setInterval(function() {
         update_nodes();
-    }, 10000);
+    }, 2000);
     update_nodes();
 
     // add_el_at("/static/red_line.gif", "t-10", 347, 420 );
